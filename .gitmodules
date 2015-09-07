@@ -1,0 +1,15 @@
+[submodule "jinja2"]
+	path = jinja2
+	url = https://github.com/mitsuhiko/jinja2.git
+[submodule "external/aiohttp"]
+	path = external/aiohttp
+	url = https://github.com/KeepSafe/aiohttp.git
+[submodule "external/jinja2"]
+	path = external/jinja2
+	url = https://github.com/mitsuhiko/jinja2.git
+[submodule "external/markupsafe"]
+	path = external/markupsafe
+	url = https://github.com/mitsuhiko/markupsafe.git
+[submodule "external/chardet"]
+	path = external/chardet
+	url = https://github.com/chardet/chardet.git

@@ -7,7 +7,9 @@ import time
 import os
 import sys
 
-bl_info = {"name": "AsyncIO Event Loop", "category": "Python", "author": "Andreas Klostermann"}
+bl_info = {"name": "AsyncIO Event Loop",
+           "category": "Python",
+           "author": "Andreas Klostermann"}
 
 # Global Event Queue
 event_queue = asyncio.Queue()
@@ -71,8 +73,12 @@ class AsyncioBridgeOperator(bpy.types.Operator):
     bl_idname = "bpy.start_asyncio_bridge"
     bl_label = "Start Asyncio Modal Operator"
 
-    _timer = None
 
+    def __init__(self):
+        print("Start.")
+        super().__init__()
+    def __del__(self):
+        print("End.")
     def modal(self, context, event):
         if event.type == 'TIMER':
             _run_once(self.loop)
@@ -93,14 +99,19 @@ class AsyncioBridgeOperator(bpy.types.Operator):
         return {'PASS_THROUGH'}
 
     def execute(self, context):
+        print(context.area)
         self.types = {}
         self.listeners = {}
         self.listener_id = 0
         self.loop = asyncio.get_event_loop()
         self.loop.operator = self
         wm = context.window_manager
-        self._timer = wm.event_timer_add(0.005, context.window)
         wm.modal_handler_add(self)
+        self._timer = wm.event_timer_add(0.005, context.window)
+        return {'RUNNING_MODAL'}
+    def invoke(self, context, event):
+        print(context.window)
+        self.execute(context)
         return {'RUNNING_MODAL'}
 
     def cancel(self, context):
@@ -149,12 +160,12 @@ class BlenderListener(object):
 
 def register():
     bpy.utils.register_class(AsyncioBridgeOperator)
+def ensure_running():
+    loop = asyncio.get_event_loop()
+    if not hasattr(loop, "operator") or loop.operator is None:
+        print("Starting Asyncio")
+        bpy.ops.bpy.start_asyncio_bridge("INVOKE_DEFAULT")
 
 def unregister():
     bpy.utils.unregister_class(AsyncioBridgeOperator)
-
-asyncio.get_event_loop().operator = None
-
-if __name__ == "__main__":
-    register()
-    bpy.ops.bpy.start_asyncio_bridge()
+register()

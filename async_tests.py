@@ -4,6 +4,12 @@ from asyncio import coroutine, sleep, Task, wait_for
 import sys
 import os
 sys.path.append(os.path.dirname(__file__))
+external_path = os.path.join(os.path.dirname(__file__), "external")
+
+libs = ["aiohttp", "jinja2", "markupsafe", "pyzmq"]
+for name in libs:
+    sys.path.append(os.path.join(external_path, name))
+
 import aiohttp
 import asyncio_bridge
 import feedparser
@@ -15,6 +21,7 @@ def prompt(text):
 
 def title(text):
     bpy.data.objects['title'].data.body = text
+
 
 @coroutine
 def test_1():
@@ -38,7 +45,7 @@ def test_1():
     listener.remove()
 
     yield from http_request_demo()
-    yield from http_server_demo()
+    #yield from http_server_demo()
 
 
 @coroutine
@@ -100,7 +107,7 @@ def http_server_demo():
 
 
     @coroutine
-    def init(loop):
+    def start(loop):
         app = web.Application(loop=loop)
         app.router.add_route('GET', '/', handle)
 
@@ -113,4 +120,7 @@ def http_server_demo():
 if __name__ == "__main__":
     asyncio_bridge.register()
     bpy.ops.bpy.start_asyncio_bridge()
-    Task(test_1())
+    #Task(test_1())
+    from kernel import launch_kernel
+    launch_kernel()
+

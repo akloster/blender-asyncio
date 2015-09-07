@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>BlendSite {{ request.blend_filepath}}</title>
+
+    <!-- Bootstrap -->
+    <link href="/static/basic/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+     <link href="/static/basic/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="page-header">
+        <h1>BlendSite <small>Blender {{ request.blender_version_string }}</small></h1>
+        <div>{{ request.blend_filepath }}</div>
+    </div>
+    <div class="row">
+          <div class="col-md-4"><h3>Objects</h3>
+              <p>Show a tree of objects contained in this file.</p>
+          </div>
+          <div class="col-md-4"><h3>Scripting</h3>
+              <p>Edit text files and run scripts.</p>
+          </div>
+          <div class="col-md-4"><h3>About</h3>
+              <p>This is a simple web interface to a running Blender instance.
+              </p>
+          </div>
+        </div>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/static/basic/bootstrap/js/bootstrap.min.js"></script>
+  </body>
+</html>
