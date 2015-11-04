@@ -7,14 +7,6 @@ import time
 import os
 import sys
 
-bl_info = {"name": "AsyncIO Event Loop",
-           "category": "Python",
-           "author": "Andreas Klostermann"}
-
-# Global Event Queue
-event_queue = asyncio.Queue()
-
-
 def _run_once(self):
     """Run one full iteration of the event loop.
 
@@ -68,6 +60,7 @@ def _run_once(self):
             handle._run()
     handle = None  # Needed to break cycles when an exception
 
+
 class AsyncioBridgeOperator(bpy.types.Operator):
     """Operator which runs its self from a timer"""
     bl_idname = "bpy.start_asyncio_bridge"
@@ -99,7 +92,6 @@ class AsyncioBridgeOperator(bpy.types.Operator):
         return {'PASS_THROUGH'}
 
     def execute(self, context):
-        print(context.area)
         self.types = {}
         self.listeners = {}
         self.listener_id = 0
@@ -110,7 +102,6 @@ class AsyncioBridgeOperator(bpy.types.Operator):
         self._timer = wm.event_timer_add(0.005, context.window)
         return {'RUNNING_MODAL'}
     def invoke(self, context, event):
-        print(context.window)
         self.execute(context)
         return {'RUNNING_MODAL'}
 
@@ -118,49 +109,17 @@ class AsyncioBridgeOperator(bpy.types.Operator):
         wm = context.window_manager
         wm.event_timer_remove(self._timer)
 
-    def add_listener(self, listener):
-        self.listeners[self.listener_id] = listener
-        listener.id = self.listener_id
-        self.listener_id += 1
 
-    def remove_listener(self, listener):
-        del self.listeners[listener.id]
-
-
-class BlenderListener(object):
-    def __init__(self, event_type=None, callback=None, catch=False):
-        self.event_type = event_type
-        self.callback = callback
-        self.catch = catch
-        self.event = None
-        self.operator = asyncio.get_event_loop().operator
-        self.operator.add_listener(self)
-        self.flag = asyncio.Event()
-
-    def check_event(self, event):
-        self.event = event
-        if self.event_type is not None:
-            if event.type != self.event_type:
-                return False, False
-        if self.callback is not None:
-            return self.callback(event), self.catch
-        else:
-            return True, self.catch
-    def clear(self):
-        self.flag.clear()
-
-    @asyncio.coroutine
-    def wait(self):
-        yield from self.flag.wait()
-        self.flag.clear()
-
-    def remove(self):
-        self.operator.remove_listener(self)
 
 
 def register():
-    bpy.utils.register_class(AsyncioBridgeOperator)
+    try:
+        bpy.utils.register_class(AsyncioBridgeOperator)
+    except:
+        pass
+
 def ensure_running():
+    register()
     loop = asyncio.get_event_loop()
     if not hasattr(loop, "operator") or loop.operator is None:
         print("Starting Asyncio")
@@ -168,4 +127,3 @@ def ensure_running():
 
 def unregister():
     bpy.utils.unregister_class(AsyncioBridgeOperator)
-register()

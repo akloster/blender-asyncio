@@ -121,6 +121,4 @@ if __name__ == "__main__":
     asyncio_bridge.register()
     bpy.ops.bpy.start_asyncio_bridge()
     #Task(test_1())
-    from kernel import launch_kernel
-    launch_kernel()
 
