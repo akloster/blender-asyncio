@@ -6,8 +6,6 @@ import os
 
 from asyncio import Future
 
-#def destroy_operator(cls):
-#    bpy.utils.unregister_class(cls)
 
 class BlenderFuture(Future):
     futures = {}
@@ -41,16 +39,13 @@ class TemporaryDialogOperatorClass(bpy.types.Operator):
             self.future.set_result(None)
 
 bpy.utils.register_class(TemporaryDialogOperatorClass)
-@asyncio.coroutine
-def open_file_dialog():
+async def open_file_dialog():
     bl_idname = "asyncio.file_dialog"
     future = BlenderFuture()
 
     TemporaryDialogOperatorClass.future = future
     bpy.ops.asyncio.temp_file_dialog("INVOKE_DEFAULT")
-    yield from future
-    return future.result()
-
+    return await future
 
 
 properties = []
@@ -67,8 +62,7 @@ class TestDialog(AsyncDialog):
     my_string = bpy.props.StringProperty(name="String Value")
 
 
-@asyncio.coroutine
-def open_dialog(dialog_class):
+async def open_dialog(dialog_class):
     class DialogOperator(bpy.types.Operator, TestDialog):
         bl_idname = "object.dialog_operator"
         bl_label = "Simple Dialog Operator"
@@ -93,5 +87,5 @@ def open_dialog(dialog_class):
     DialogOperator.future = future
     bpy.utils.register_class(DialogOperator)
     bpy.ops.object.dialog_operator('INVOKE_DEFAULT')
-    result = yield from future
+    result = await future
     return result
